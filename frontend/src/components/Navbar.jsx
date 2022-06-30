@@ -1,7 +1,14 @@
 import { Button, Typography, Container } from '@mui/material'
 import { Link } from 'react-router-dom'
+import { useNotesContext } from '../hooks/useNotesContext'
 
 const Navbar = () => {
+  const { user, dispatch } = useNotesContext()
+
+  const handleLogout = () => {
+    dispatch({ type: 'LOGOUT_USER' })
+  }
+
   return (
     <Container
       component='header'
@@ -17,7 +24,10 @@ const Navbar = () => {
           Notes
         </Typography>
       </Link>
-      <Button variant='contained'>Logout</Button>
+      {user && <Typography sx={{ fontSize: '1em' }}>{user.email}</Typography>}
+      <Button variant='contained' onClick={handleLogout}>
+        Logout
+      </Button>
     </Container>
   )
 }

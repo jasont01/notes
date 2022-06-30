@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import { useNotesContext } from '../hooks/useNotesContext'
 
 const NoteForm = () => {
-  const { dispatch } = useNotesContext()
+  const { user, dispatch } = useNotesContext()
 
   const [title, setTitle] = useState('')
   const [text, setText] = useState('')
@@ -19,6 +19,7 @@ const NoteForm = () => {
       body: JSON.stringify(note),
       headers: {
         'Content-Type': 'application/json',
+        authorization: 'Bearer ' + user.token,
       },
     })
     const json = await response.json()
