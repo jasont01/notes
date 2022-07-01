@@ -46,13 +46,12 @@ const loginUser = async (req, res) => {
     res
       .status(200)
       .cookie('token', generateToken(user._id), {
-        maxAge: 900000,
+        maxAge: 180 * 24 * 60 * 60 * 1000, // 180 days
         httpOnly: true,
       })
       .json({
         _id: user._id,
         email: user.email,
-        token: generateToken(user._id),
       })
   } else {
     return res.status(400).json({ error: 'Invalid credentials' })
