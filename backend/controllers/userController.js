@@ -43,14 +43,60 @@ const loginUser = async (req, res) => {
   const user = await User.findOne({ email })
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    res.status(200).json({
-      _id: user._id,
-      email: user.email,
-      token: generateToken(user._id),
-    })
+    res
+      .status(200)
+      .cookie('token', generateToken(user._id), {
+        maxAge: 900000,
+        httpOnly: true,
+      })
+      .json({
+        _id: user._id,
+        email: user.email,
+        token: generateToken(user._id),
+      })
   } else {
     return res.status(400).json({ error: 'Invalid credentials' })
   }
+}
+
+// @desc    Check if user is logged in
+// @route   GET /api/users/loggedIn
+// @access  Public
+const loggedIn = (req, res) => {
+  const token = req.cookies.token
+  try {
+    jwt.verify(token, process.env.JWT_SECRET)
+    res.send(true)
+  } catch (error) {
+    res.send(false)
+  }
+}
+
+// @desc    Get user
+// @route   GET /api/users
+// @access  Private
+const getUser = async (req, res) => {
+  const { id } = req.auth
+  const user = await User.findById(id)
+
+  if (user) {
+    res.status(200).json({ _id: user._id, email: user.email })
+  } else {
+    return res.status(400).json({ error: 'Invalid credentials' })
+  }
+}
+
+// @desc    Logout user
+// @route   GET /api/users/logout
+// @access  Private
+const logoutUser = async (req, res) => {
+  res
+    .status(200)
+    .cookie('token', 'none', {
+      expires: new Date(Date.now() + 5 * 1000),
+      httpOnly: true,
+    })
+    .json({ success: true, message: 'User logged out successfully' })
 }
 
 const generateToken = (id) => {
@@ -59,6 +105,4 @@ const generateToken = (id) => {
   })
 }
 
-//TODO: Refresh Token
-
-module.exports = { registerUser, loginUser }
+module.exports = { registerUser, loginUser, loggedIn, getUser, logoutUser }

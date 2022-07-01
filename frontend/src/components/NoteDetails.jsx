@@ -4,14 +4,11 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 const NoteDetails = ({ note }) => {
-  const { user, dispatch } = useNotesContext()
+  const { dispatch } = useNotesContext()
 
   const handleDelete = async () => {
     const response = await fetch(`/api/notes/${note._id}`, {
       method: 'DELETE',
-      headers: {
-        authorization: 'Bearer ' + user.token,
-      },
     })
     const json = await response.json()
 

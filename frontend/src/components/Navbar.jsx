@@ -5,8 +5,13 @@ import { useNotesContext } from '../hooks/useNotesContext'
 const Navbar = () => {
   const { user, dispatch } = useNotesContext()
 
-  const handleLogout = () => {
-    dispatch({ type: 'LOGOUT_USER' })
+  const handleLogout = async () => {
+    const response = await fetch('/api/users/logout')
+    if (response.ok) {
+      dispatch({ type: 'LOGOUT_USER' })
+    } else {
+      console.error(response.error)
+    }
   }
 
   return (
