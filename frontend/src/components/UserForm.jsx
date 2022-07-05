@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useNotesContext } from '../hooks/useNotesContext'
+import { useAuthContext } from '../hooks/useAuthContext'
 import { Box, TextField, Button } from '@mui/material'
 import { toast } from 'react-toastify'
 
 const UserForm = ({ endpoint }) => {
-  const { dispatch } = useNotesContext()
+  const { dispatch } = useAuthContext()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

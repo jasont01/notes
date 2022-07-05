@@ -1,9 +1,9 @@
 import { Button, Typography, Container } from '@mui/material'
 import { Link } from 'react-router-dom'
-import { useNotesContext } from '../hooks/useNotesContext'
+import { useAuthContext } from '../hooks/useAuthContext'
 
 const Navbar = () => {
-  const { user, dispatch } = useNotesContext()
+  const { user, dispatch } = useAuthContext()
 
   const handleLogout = async () => {
     const response = await fetch('/api/auth/logout')

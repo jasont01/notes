@@ -1,10 +1,12 @@
+import { useAuthContext } from '../hooks/useAuthContext'
 import { useNotesContext } from '../hooks/useNotesContext'
 import { Box, Button, Paper, Typography } from '@mui/material'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 const NoteDetails = ({ note }) => {
-  const { accessToken, dispatch } = useNotesContext()
+  const { dispatch } = useNotesContext()
+  const { accessToken } = useAuthContext()
 
   const handleDelete = async () => {
     const response = await fetch(`/api/notes/${note._id}`, {

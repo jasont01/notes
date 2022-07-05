@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { Container, Box, Button, TextField, Typography } from '@mui/material'
 import { toast } from 'react-toastify'
 import { useNotesContext } from '../hooks/useNotesContext'
+import { useAuthContext } from '../hooks/useAuthContext'
 
 const NoteForm = () => {
-  const { accessToken, dispatch } = useNotesContext()
+  const { dispatch } = useNotesContext()
+  const { accessToken } = useAuthContext()
 
   const [title, setTitle] = useState('')
   const [text, setText] = useState('')

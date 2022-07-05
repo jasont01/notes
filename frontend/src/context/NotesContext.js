@@ -19,21 +19,6 @@ export const notesReducer = (state, action) => {
         ...state,
         notes: state.notes.filter((n) => n._id !== action.payload._id),
       }
-    case 'LOGIN_USER':
-      return {
-        ...state,
-        user: action.payload,
-      }
-    case 'LOGOUT_USER':
-      return {
-        notes: null,
-        user: null,
-      }
-    case 'SET_ACCESS_TOKEN':
-      return {
-        ...state,
-        accessToken: action.payload,
-      }
     default:
       return state
   }
@@ -42,8 +27,6 @@ export const notesReducer = (state, action) => {
 export const NotesContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(notesReducer, {
     notes: null,
-    user: null,
-    accessToken: null,
   })
 
   return (
