@@ -15,7 +15,7 @@ const createNote = async (req, res) => {
     const note = await Note.create({
       title,
       text,
-      user: req.auth._id,
+      user: req.user._id,
     })
     res.status(200).json(note)
   } catch (error) {
@@ -27,7 +27,7 @@ const createNote = async (req, res) => {
 // @route GET /api/notes
 // @access Private
 const getAllNotes = async (req, res) => {
-  const notes = await Note.find({ user: req.auth._id })
+  const notes = await Note.find({ user: req.user._id })
   res.status(200).json(notes)
 }
 
@@ -82,7 +82,7 @@ const validateRequest = async (req, res) => {
     return false
   }
 
-  if (note.user.toString() !== req.auth._id.toString()) {
+  if (note.user.toString() !== req.user._id.toString()) {
     res.status(401).json({ error: 'Not Authorized' })
     return false
   }

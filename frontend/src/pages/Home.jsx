@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Container, Grid } from '@mui/material'
 import { useNotesContext } from '../hooks/useNotesContext'
@@ -8,53 +8,72 @@ import NoteDetails from '../components/NoteDetails'
 import NoteForm from '../components/NoteForm'
 
 const Home = () => {
-  const { notes, user, dispatch } = useNotesContext()
+  const { notes, dispatch, accessToken } = useNotesContext()
 
   const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
 
+  const refreshToken = useCallback(async () => {
+    const response = await fetch('/api/auth/refresh', { method: 'POST' })
+    const json = await response.json()
+
+    dispatch({ type: 'SET_ACCESS_TOKEN', payload: json.accessToken })
+  }, [dispatch])
+
   useEffect(() => {
-    const fetchNotes = async () => {
-      const response = await fetch('/api/notes')
-      const json = await response.json()
-
-      if (response.ok) {
-        dispatch({ type: 'SET_NOTES', payload: json })
-      }
-    }
-
     const getUser = async () => {
-      const response = await fetch('/api/users')
+      if (!accessToken) return
+      const response = await fetch('/api/users', {
+        headers: {
+          authorization: 'Bearer ' + accessToken,
+        },
+      })
       const json = await response.json()
-
-      if (response.ok) {
-        dispatch({ type: 'LOGIN_USER', payload: json })
-        fetchNotes()
-        setLoading(false)
-      } else {
-        navigate('/login')
-      }
+      dispatch({ type: 'LOGIN_USER', payload: json })
     }
 
-    const handleLogin = async () => {
-      const response = await fetch('/api/users/loggedIn')
-      const isLoggedIn = await response.json()
-
+    const checkSession = async () => {
+      const session = await fetch('/api/auth/loggedIn')
+      const isLoggedIn = await session.json()
+      console.log(isLoggedIn)
       if (isLoggedIn) {
+        refreshToken()
         getUser()
       } else {
         navigate('/login')
       }
     }
 
-    if (user) {
-      fetchNotes()
-      setLoading(false)
-    } else {
-      handleLogin()
+    if (!accessToken) checkSession()
+  }, [dispatch, navigate, refreshToken, accessToken])
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      if (!accessToken) return
+      const response = await fetch('/api/notes', {
+        headers: {
+          authorization: 'Bearer ' + accessToken,
+        },
+      })
+      const json = await response.json()
+
+      if (response.ok) {
+        dispatch({ type: 'SET_NOTES', payload: json })
+        setLoading(false)
+      }
     }
-  }, [dispatch, navigate, user])
+
+    if (loading && accessToken) fetchNotes()
+  }, [dispatch, loading, accessToken])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshToken()
+    }, 14 * 60 * 1000) // refresh every 14mins before accessToken expires
+
+    return () => clearInterval(interval)
+  }, [dispatch, refreshToken])
 
   if (loading) {
     return <Spinner />

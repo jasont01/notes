@@ -34,7 +34,7 @@ const Register = () => {
           <Typography component='h1' variant='h5'>
             Register
           </Typography>
-          <UserForm endpoint={'/api/users'} />
+          <UserForm endpoint={'/api/users/register'} />
         </Box>
       </Grid>
     </Grid>

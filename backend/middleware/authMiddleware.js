@@ -1,22 +1,36 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 
-const protect = async (req, res, next) => {
-  if (!req.cookies.token) {
-    return res.status(401).json({ error: 'No Authorization Token' })
-  }
+const verifyRefreshToken = async (req, res, next) => {
+  if (!req.cookies.token) return res.sendStatus(401)
 
   try {
     const token = req.cookies.token
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
 
-    req.auth = await User.findById(decoded.id).select('-password')
+    req.user = await User.findById(decoded.id).select('-password')
 
     next()
   } catch (error) {
-    return res.status(401).json({ error: 'Not Authorized' })
+    return res.sendStatus(403)
   }
 }
 
-module.exports = { protect }
+const verifyAccessToken = async (req, res, next) => {
+  if (!req.headers.authorization) return res.sendStatus(401)
+
+  try {
+    const token = req.headers.authorization.split(' ')[1]
+
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+
+    req.user = await User.findById(decoded.id).select('-password')
+
+    next()
+  } catch (error) {
+    return res.sendStatus(403)
+  }
+}
+
+module.exports = { verifyRefreshToken, verifyAccessToken }

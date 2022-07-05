@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, 'password is required'],
     },
+    sessions: [String],
   },
   {
     timestamps: true,

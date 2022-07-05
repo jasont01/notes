@@ -29,6 +29,11 @@ export const notesReducer = (state, action) => {
         notes: null,
         user: null,
       }
+    case 'SET_ACCESS_TOKEN':
+      return {
+        ...state,
+        accessToken: action.payload,
+      }
     default:
       return state
   }
@@ -38,6 +43,7 @@ export const NotesContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(notesReducer, {
     notes: null,
     user: null,
+    accessToken: null,
   })
 
   return (
