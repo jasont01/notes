@@ -24,7 +24,21 @@ const UserForm = ({ endpoint }) => {
         'Content-Type': 'application/json',
       },
     })
-    const json = await response.json()
+
+    let json
+
+    if (response.status === 201) {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(login),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      json = await res.json()
+    } else {
+      json = await response.json()
+    }
 
     if (response.ok) {
       setEmail('')

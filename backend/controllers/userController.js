@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const User = require('../models/userModel')
+const validator = require('validator')
 
 // @desc    Register new user
 // @route   POST /api/users/register
@@ -9,6 +10,10 @@ const registerUser = async (req, res) => {
 
   if (!email || !password) {
     return res.status(400).json({ error: 'email and password are required' })
+  }
+
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ error: 'email is not valid' })
   }
 
   const userExists = await User.findOne({ email })
@@ -27,7 +32,7 @@ const registerUser = async (req, res) => {
 
   if (!user) return res.sendStatus(400)
 
-  res.sendStatus(201)
+  res.status(201).json(user)
 }
 
 // @desc    Get user

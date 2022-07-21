@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -12,6 +12,7 @@ const App = () => {
   const { dispatch, accessToken } = useAuthContext()
 
   const navigate = useNavigate()
+  const location = useLocation()
 
   const refreshToken = useCallback(async () => {
     const response = await fetch('/api/auth/refresh', { method: 'POST' })
@@ -40,12 +41,12 @@ const App = () => {
         refreshToken()
         getUser()
       } else {
-        navigate('/login')
+        if (location.pathname === '/') navigate('/login')
       }
     }
 
     if (!accessToken) checkSession()
-  }, [dispatch, navigate, refreshToken, accessToken])
+  }, [dispatch, navigate, refreshToken, accessToken, location])
 
   useEffect(() => {
     const interval = setInterval(() => {
