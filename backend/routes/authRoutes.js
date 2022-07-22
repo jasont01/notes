@@ -4,14 +4,14 @@ const {
   refreshToken,
   loginUser,
   logoutUser,
-  loggedIn,
+  session,
 } = require('../controllers/authController')
 
 const router = express.Router()
 
 router.post('/login', loginUser)
-router.get('/logout', verifyRefreshToken, logoutUser)
-router.post('/refresh', verifyRefreshToken, refreshToken)
-router.get('/loggedIn', loggedIn)
+router.get('/session', session)
+router.put('/refresh', verifyRefreshToken, refreshToken)
+router.delete('/logout', verifyRefreshToken, logoutUser)
 
 module.exports = router

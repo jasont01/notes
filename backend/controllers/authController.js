@@ -20,21 +20,6 @@ const generateRefreshToken = (id) => {
   })
 }
 
-// @desc    Refresh access token
-// @route   POST /api/auth/refresh
-// @access  Private
-const refreshToken = async (req, res) => {
-  const id = req.user._id
-  const refeshToken = req.cookies.token
-
-  const user = await User.findById(id)
-
-  const validSession = user.sessions.find((session) => session === refeshToken)
-  if (!validSession) return res.sendStatus(403)
-
-  res.status(200).json({ accessToken: generateAccessToken(id) })
-}
-
 // @desc    Authenticate a user
 // @route   POST /api/auth/login
 // @access  Public
@@ -63,8 +48,55 @@ const loginUser = async (req, res) => {
   }
 }
 
+// @desc    Check for existing session
+// @route   GET /api/auth/session
+// @access  Public
+const session = async (req, res) => {
+  if (!req.cookies.token)
+    return res.json({
+      accessToken: null,
+    })
+
+  try {
+    const refreshToken = req.cookies.token
+    const { id } = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+
+    const user = await User.findById(id)
+
+    const validSession = user.sessions.find(
+      (session) => session === refreshToken
+    )
+    if (!validSession) return res.sendStatus(403)
+
+    res.json({
+      _id: user._id,
+      email: user.email,
+      accessToken: generateAccessToken(id),
+    })
+  } catch (error) {
+    res.json({
+      accessToken: null,
+    })
+  }
+}
+
+// @desc    Refresh access token
+// @route   PUT /api/auth/refresh
+// @access  Private
+const refreshToken = async (req, res) => {
+  const id = req.user._id
+  const refreshToken = req.cookies.token
+
+  const user = await User.findById(id)
+
+  const validSession = user.sessions.find((session) => session === refreshToken)
+  if (!validSession) return res.sendStatus(403)
+
+  res.status(200).json({ accessToken: generateAccessToken(id) })
+}
+
 // @desc    Logout user
-// @route   GET /api/auth/logout
+// @route   DELETE /api/auth/logout
 // @access  Private
 const logoutUser = async (req, res) => {
   const refeshToken = req.cookies.token
@@ -81,21 +113,4 @@ const logoutUser = async (req, res) => {
     .json({ success: true, message: 'User logged out successfully' })
 }
 
-// @desc    Check if user is logged in
-// @route   GET /api/auth/loggedIn
-// @access  Public
-const loggedIn = async (req, res) => {
-  if (!req.cookies.token) return res.send(false)
-
-  try {
-    const token = req.cookies.token
-
-    await jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
-
-    res.send(true)
-  } catch (error) {
-    res.send(false)
-  }
-}
-
-module.exports = { refreshToken, loginUser, logoutUser, loggedIn }
+module.exports = { refreshToken, loginUser, logoutUser, session }

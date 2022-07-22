@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const usersAPI = axios.create({
-  baseURL: 'http://localhost:5000/api/users',
+  baseURL: '/api/users',
 })
 
 const registerUser = async (data) => {
@@ -11,7 +11,6 @@ const registerUser = async (data) => {
   return response.data
 }
 
-//TODO: Implement
 const getUser = async (accessToken) => {
   if (!accessToken) return
   const response = await usersAPI.get('/', {

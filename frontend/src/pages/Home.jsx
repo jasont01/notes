@@ -27,7 +27,7 @@ const Home = () => {
       }
     }
 
-    if (loading) fetchNotes()
+    if (loading && accessToken) fetchNotes()
   }, [dispatch, loading, accessToken, dispatchAlert])
 
   if (loading) {
