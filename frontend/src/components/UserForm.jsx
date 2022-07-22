@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { useAlertContext } from '../hooks/useAlertContext'
 import { Box, TextField, Button } from '@mui/material'
-import { toast } from 'react-toastify'
+import { loginUser } from '../api/authAPI'
+import { registerUser } from '../api/usersAPI'
 
-const UserForm = ({ endpoint }) => {
+const UserForm = ({ register = false }) => {
   const { dispatch } = useAuthContext()
+  const { dispatchAlert } = useAlertContext()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -15,38 +18,29 @@ const UserForm = ({ endpoint }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    const login = { email, password }
+    const formData = { email, password }
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      body: JSON.stringify(login),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-
-    let json
-
-    if (response.status === 201) {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify(login),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      json = await res.json()
-    } else {
-      json = await response.json()
+    if (register) {
+      try {
+        await registerUser(formData)
+      } catch (error) {
+        dispatchAlert({ type: 'ERROR', payload: error.response.data.error })
+        return
+      }
     }
 
-    if (response.ok) {
+    try {
+      const user = await loginUser(formData)
+      dispatch({ type: 'LOGIN_USER', payload: user })
       setEmail('')
       setPassword('')
-      dispatch({ type: 'LOGIN_USER', payload: json })
+      dispatchAlert({
+        type: 'SUCCESS',
+        payload: register ? 'Registration Successful' : 'Login Successful',
+      })
       navigate('/')
-    } else {
-      toast.error(json.error)
+    } catch (error) {
+      dispatchAlert({ type: 'ERROR', payload: error.response.data.error })
     }
   }
 

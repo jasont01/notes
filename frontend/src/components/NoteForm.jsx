@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Container, Box, Button, TextField, Typography } from '@mui/material'
-import { toast } from 'react-toastify'
 import { useNotesContext } from '../hooks/useNotesContext'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { useAlertContext } from '../hooks/useAlertContext'
+import { createNote } from '../api/notesAPI'
 
 const NoteForm = () => {
   const { dispatch } = useNotesContext()
   const { accessToken } = useAuthContext()
+  const { dispatchAlert } = useAlertContext()
 
   const [title, setTitle] = useState('')
   const [text, setText] = useState('')
@@ -16,22 +18,13 @@ const NoteForm = () => {
 
     const note = { title, text }
 
-    const response = await fetch('/api/notes', {
-      method: 'POST',
-      body: JSON.stringify(note),
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: 'Bearer ' + accessToken,
-      },
-    })
-    const json = await response.json()
-
-    if (response.ok) {
+    try {
+      const response = await createNote(accessToken, note)
+      dispatch({ type: 'CREATE_NOTE', payload: response })
       setTitle('')
       setText('')
-      dispatch({ type: 'CREATE_NOTE', payload: json })
-    } else {
-      toast.error(json.error)
+    } catch (error) {
+      dispatchAlert({ type: 'ERROR', payload: error.response.data.error })
     }
   }
 
@@ -64,7 +57,12 @@ const NoteForm = () => {
           onChange={(e) => setText(e.target.value)}
           value={text}
         />
-        <Button type='submit' variant='contained' sx={{ marginY: '1em' }}>
+        <Button
+          type='submit'
+          variant='contained'
+          sx={{ marginY: '1em' }}
+          disabled={title.length === 0 || text.length === 0}
+        >
           Add
         </Button>
       </Box>

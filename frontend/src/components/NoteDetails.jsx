@@ -1,24 +1,23 @@
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useNotesContext } from '../hooks/useNotesContext'
+import { useAlertContext } from '../hooks/useAlertContext'
 import { Box, Button, Paper, Typography } from '@mui/material'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { deleteNote } from '../api/notesAPI'
 
 const NoteDetails = ({ note }) => {
   const { dispatch } = useNotesContext()
   const { accessToken } = useAuthContext()
+  const { dispatchAlert } = useAlertContext()
 
   const handleDelete = async () => {
-    const response = await fetch(`/api/notes/${note._id}`, {
-      method: 'DELETE',
-      headers: {
-        authorization: 'Bearer ' + accessToken,
-      },
-    })
-    const json = await response.json()
-
-    if (response.ok) {
-      dispatch({ type: 'DELETE_NOTE', payload: json })
+    try {
+      const response = await deleteNote(accessToken, note._id)
+      dispatch({ type: 'DELETE_NOTE', payload: response })
+      dispatchAlert({ type: 'INFO', payload: 'note deleted' })
+    } catch (error) {
+      dispatchAlert({ type: 'ERROR', payload: error.response.data.error })
     }
   }
 

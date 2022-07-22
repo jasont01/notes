@@ -32,7 +32,7 @@ const Login = () => {
           <Typography component='h1' variant='h5'>
             Sign in
           </Typography>
-          <UserForm endpoint={'/api/auth/login'} />
+          <UserForm />
           <Grid container sx={{ justifyContent: 'center' }}>
             <Grid item>
               <Link href='/register' variant='body2'>

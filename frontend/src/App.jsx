@@ -1,9 +1,10 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect } from 'react'
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import CssBaseline from '@mui/material/CssBaseline'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import Alert from './components/Alert'
 import { useAuthContext } from './hooks/useAuthContext'
+import { refreshToken, isLoggedIn } from './api/authAPI'
+import { getUser } from './api/usersAPI'
 import Home from './pages/Home'
 import Register from './pages/Register'
 import Login from './pages/Login'
@@ -14,39 +15,19 @@ const App = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const refreshToken = useCallback(async () => {
-    const response = await fetch('/api/auth/refresh', { method: 'POST' })
-    const json = await response.json()
-
-    dispatch({ type: 'SET_ACCESS_TOKEN', payload: json.accessToken })
-  }, [dispatch])
-
   useEffect(() => {
-    const getUser = async () => {
-      if (!accessToken) return
-      const response = await fetch('/api/users', {
-        headers: {
-          authorization: 'Bearer ' + accessToken,
-        },
-      })
-      const json = await response.json()
-      dispatch({ type: 'LOGIN_USER', payload: json })
-    }
-
     const checkSession = async () => {
-      const session = await fetch('/api/auth/loggedIn')
-      const isLoggedIn = await session.json()
+      if (await isLoggedIn()) {
+        dispatch({ type: 'SET_ACCESS_TOKEN', payload: await refreshToken() })
 
-      if (isLoggedIn) {
-        refreshToken()
-        getUser()
+        dispatch({ type: 'LOGIN_USER', payload: await getUser(accessToken) })
       } else {
         if (location.pathname === '/') navigate('/login')
       }
     }
 
     if (!accessToken) checkSession()
-  }, [dispatch, navigate, refreshToken, accessToken, location])
+  }, [dispatch, navigate, accessToken, location])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,7 +35,7 @@ const App = () => {
     }, 14 * 60 * 1000) // refresh every 14mins before accessToken expires
 
     return () => clearInterval(interval)
-  }, [dispatch, refreshToken])
+  }, [])
 
   return (
     <>
@@ -64,7 +45,7 @@ const App = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
       </Routes>
-      <ToastContainer position='bottom-center' theme='colored' />
+      <Alert />
     </>
   )
 }

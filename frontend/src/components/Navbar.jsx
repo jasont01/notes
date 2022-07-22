@@ -1,16 +1,20 @@
 import { Button, Typography, Container } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { useAlertContext } from '../hooks/useAlertContext'
+import { logoutUser } from '../api/authAPI'
 
 const Navbar = () => {
   const { user, dispatch } = useAuthContext()
+  const { dispatchAlert } = useAlertContext()
 
   const handleLogout = async () => {
-    const response = await fetch('/api/auth/logout')
-    if (response.ok) {
+    try {
+      await logoutUser()
       dispatch({ type: 'LOGOUT_USER' })
-    } else {
-      console.error(response.error)
+      dispatchAlert({ type: 'SUCCESS', payload: 'Logout Successful' })
+    } catch (error) {
+      dispatchAlert({ type: 'ERROR', payload: error.response.data.error })
     }
   }
 
