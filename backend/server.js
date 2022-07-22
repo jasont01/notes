@@ -4,6 +4,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
+const path = require('path')
 
 const app = express()
 
@@ -14,6 +15,10 @@ app.use(cors())
 app.use('/api/auth', require('./routes/authRoutes'))
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/notes', require('./routes/noteRoutes'))
+
+app.use((req, res) =>
+  res.status(404).sendFile(path.join(__dirname, '404.html'))
+)
 
 mongoose
   .connect(process.env.MONGO_URI)
