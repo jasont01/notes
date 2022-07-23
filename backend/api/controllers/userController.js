@@ -51,7 +51,7 @@ const updateUser = (req, res) => {
   res.json({ message: 'update user' })
 }
 
-// @desc    Get user
+// @desc    Delete user
 // @route   DELETE /api/users/delete
 // @access  Private
 const deleteUser = (req, res) => {
