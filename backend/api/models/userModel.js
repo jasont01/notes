@@ -18,4 +18,6 @@ const userSchema = mongoose.Schema(
   }
 )
 
-module.exports = mongoose.model('User', userSchema)
+const notesDB = mongoose.connection.useDb('notes')
+
+module.exports = notesDB.model('User', userSchema)

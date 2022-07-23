@@ -13,4 +13,6 @@ const noteSchema = mongoose.Schema(
   { timestamps: true }
 )
 
-module.exports = mongoose.model('Note', noteSchema)
+const notesDB = mongoose.connection.useDb('notes')
+
+module.exports = notesDB.model('Note', noteSchema)
