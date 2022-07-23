@@ -1,8 +1,11 @@
-import { Box, Grid, Paper, Avatar, Typography, Link } from '@mui/material'
+import { Box, Grid, Paper, Avatar, Typography, Button } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import UserForm from '../components/UserForm'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
+  const navigate = useNavigate()
+
   return (
     <Grid container component='main' sx={{ height: '100vh' }}>
       <Grid
@@ -35,9 +38,9 @@ const Login = () => {
           <UserForm />
           <Grid container sx={{ justifyContent: 'center' }}>
             <Grid item>
-              <Link href='/register' variant='body2'>
+              <Button size='small' onClick={() => navigate('/register')}>
                 {"Don't have an account? Sign Up"}
-              </Link>
+              </Button>
             </Grid>
           </Grid>
         </Box>
