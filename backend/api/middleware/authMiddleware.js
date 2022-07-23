@@ -11,6 +11,8 @@ const verifyRefreshToken = async (req, res, next) => {
 
     req.user = await User.findById(decoded.id).select('-password')
 
+    if (!req.user) return res.sendStatus(401)
+
     next()
   } catch (error) {
     return res.sendStatus(403)
@@ -26,6 +28,8 @@ const verifyAccessToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
 
     req.user = await User.findById(decoded.id).select('-password')
+
+    if (!req.user) return res.sendStatus(401)
 
     next()
   } catch (error) {
