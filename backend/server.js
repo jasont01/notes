@@ -12,7 +12,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors())
 
-app.use('/api', require('./routes/index'))
+app.use('/api', require('./api/routes/index'))
 
 app.use((req, res) =>
   res.status(404).sendFile(path.join(__dirname, '404.html'))
