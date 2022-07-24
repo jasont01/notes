@@ -5,7 +5,7 @@ const User = require('../models/userModel')
 const cookieOptions = {
   maxAge: 180 * 24 * 60 * 60 * 1000, // 180 days
   httpOnly: true,
-  sameSite: false,
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : false,
   secure: process.env.NODE_ENV === 'production',
 }
 
@@ -53,10 +53,7 @@ const loginUser = async (req, res) => {
 // @route   GET /api/auth/session
 // @access  Public
 const session = async (req, res) => {
-  if (!req.cookies.token)
-    return res.json({
-      accessToken: null,
-    })
+  if (!req.cookies.token) return res.sendStatus(204)
 
   try {
     const refreshToken = req.cookies.token
@@ -67,17 +64,15 @@ const session = async (req, res) => {
     const validSession = user.sessions.find(
       (session) => session === refreshToken
     )
-    if (!validSession) return res.sendStatus(403)
+    if (!validSession) return res.status(403).json({ error: 'invalid session' })
 
-    res.json({
+    res.status(200).json({
       _id: user._id,
       email: user.email,
       accessToken: generateAccessToken(id),
     })
   } catch (error) {
-    res.json({
-      accessToken: null,
-    })
+    res.status(400).json({ error })
   }
 }
 
@@ -110,7 +105,7 @@ const logoutUser = async (req, res) => {
 
   res
     .status(200)
-    .clearCookie('token')
+    .clearCookie('token', cookieOptions)
     .json({ success: true, message: 'User logged out successfully' })
 }
 

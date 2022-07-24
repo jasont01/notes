@@ -13,7 +13,7 @@ const loginUser = async (data) =>
     .then((response) => response.data)
 
 const getSession = async () =>
-  authAPI.get('/session').then((response) => response.data)
+  authAPI.get('/session').then((response) => response)
 
 const refreshToken = async () =>
   authAPI.put('/refresh').then((response) => response.data)

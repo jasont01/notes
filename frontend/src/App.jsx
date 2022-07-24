@@ -16,9 +16,9 @@ const App = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const session = await getSession()
-      if (session.accessToken) {
-        dispatch({ type: 'LOGIN_USER', payload: session })
+      const response = await getSession()
+      if (response.status === 200) {
+        dispatch({ type: 'LOGIN_USER', payload: response.data })
       } else {
         if (location.pathname === '/') navigate('/login')
       }
