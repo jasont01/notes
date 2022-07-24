@@ -1,17 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Container, Box, Button, TextField, Typography } from '@mui/material'
 import { useNotesContext } from '../hooks/useNotesContext'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useAlertContext } from '../hooks/useAlertContext'
-import { createNote } from '../api/notesAPI'
+import { createNote, updateNote } from '../api/notesAPI'
 
 const NoteForm = () => {
-  const { dispatch } = useNotesContext()
+  const { dispatch, edit } = useNotesContext()
   const { accessToken } = useAuthContext()
   const { dispatchAlert } = useAlertContext()
 
   const [title, setTitle] = useState('')
   const [text, setText] = useState('')
+
+  useEffect(() => {
+    setTitle(edit?.title || '')
+    setText(edit?.text || '')
+  }, [edit])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -19,8 +24,13 @@ const NoteForm = () => {
     const note = { title, text }
 
     try {
-      const response = await createNote(accessToken, note)
-      dispatch({ type: 'CREATE_NOTE', payload: response })
+      if (edit) {
+        const response = await updateNote(accessToken, edit._id, note)
+        dispatch({ type: 'UPDATE_NOTE', payload: response })
+      } else {
+        const response = await createNote(accessToken, note)
+        dispatch({ type: 'CREATE_NOTE', payload: response })
+      }
       setTitle('')
       setText('')
     } catch (error) {
@@ -37,7 +47,7 @@ const NoteForm = () => {
         mt='3em'
         sx={{ display: 'flex', flexDirection: 'column' }}
       >
-        <Typography variant='h5'>Add Note</Typography>
+        <Typography variant='h5'>{edit ? 'Edit Note' : 'Add Note'}</Typography>
         <TextField
           size='small'
           name='title'
@@ -63,7 +73,7 @@ const NoteForm = () => {
           sx={{ marginY: '1em' }}
           disabled={title.length === 0 || text.length === 0}
         >
-          Add
+          {edit ? 'Update' : 'Add'}
         </Button>
       </Box>
     </Container>

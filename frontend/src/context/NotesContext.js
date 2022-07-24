@@ -14,10 +14,24 @@ export const notesReducer = (state, action) => {
         ...state,
         notes: [action.payload, ...state.notes],
       }
+    case 'EDIT_NOTE':
+      return {
+        ...state,
+        edit: action.payload,
+      }
+    case 'UPDATE_NOTE':
+      return {
+        ...state,
+        notes: state.notes.map((note) =>
+          note._id !== action.payload._id ? note : action.payload
+        ),
+        edit: null,
+      }
     case 'DELETE_NOTE':
       return {
         ...state,
         notes: state.notes.filter((n) => n._id !== action.payload._id),
+        edit: null,
       }
     default:
       return state
@@ -27,6 +41,7 @@ export const notesReducer = (state, action) => {
 export const NotesContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(notesReducer, {
     notes: null,
+    edit: null,
   })
 
   return (

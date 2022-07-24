@@ -32,10 +32,9 @@ const getNote = async (accessToken, id) => {
   return response.data
 }
 
-//TODO: Implement
-const updateNote = async (accessToken, id) => {
+const updateNote = async (accessToken, id, data) => {
   if (!accessToken) return
-  const response = await notesAPI.patch(`/${id}`, {
+  const response = await notesAPI.patch(`/${id}`, data, {
     headers: { authorization: 'Bearer ' + accessToken },
   })
   return response.data
