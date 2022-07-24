@@ -10,8 +10,7 @@ const cookieParser = require('cookie-parser')
 const app = express()
 
 const corsOptions = {
-  origin:
-    process.env.NODE_ENV === 'development' || 'https://web-notes.netlify.app',
+  origin: true,
   credentials: true,
 }
 
