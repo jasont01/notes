@@ -75,6 +75,11 @@ const NoteForm = () => {
         >
           {edit ? 'Update' : 'Add'}
         </Button>
+        {edit && (
+          <Button onClick={() => dispatch({ type: 'CANCEL_EDIT' })}>
+            cancel
+          </Button>
+        )}
       </Box>
     </Container>
   )

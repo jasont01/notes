@@ -19,6 +19,11 @@ export const notesReducer = (state, action) => {
         ...state,
         edit: action.payload,
       }
+    case 'CANCEL_EDIT':
+      return {
+        ...state,
+        edit: null,
+      }
     case 'UPDATE_NOTE':
       return {
         ...state,
