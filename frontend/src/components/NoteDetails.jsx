@@ -1,7 +1,8 @@
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useNotesContext } from '../hooks/useNotesContext'
 import { useAlertContext } from '../hooks/useAlertContext'
-import { Box, Button, Paper, Typography } from '@mui/material'
+import { Box, Button, ButtonGroup, Paper, Typography } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { deleteNote } from '../api/notesAPI'
@@ -10,6 +11,10 @@ const NoteDetails = ({ note }) => {
   const { dispatch } = useNotesContext()
   const { accessToken } = useAuthContext()
   const { dispatchAlert } = useAlertContext()
+
+  const handleEdit = async () => {
+    dispatch({ type: 'EDIT_NOTE', payload: note })
+  }
 
   const handleDelete = async () => {
     try {
@@ -36,9 +41,14 @@ const NoteDetails = ({ note }) => {
       </Typography>
       <Typography>{note.text}</Typography>
       <Box sx={{ position: 'absolute', right: '0em', top: '1em' }}>
-        <Button onClick={handleDelete}>
-          <DeleteForeverIcon />
-        </Button>
+        <ButtonGroup variant='text' size='small'>
+          <Button onClick={handleEdit} size='small'>
+            <EditIcon />
+          </Button>
+          <Button onClick={handleDelete} size='small'>
+            <DeleteForeverIcon size='small' />
+          </Button>
+        </ButtonGroup>
       </Box>
       <Typography
         sx={{ fontSize: 'x-small', position: 'absolute', right: '1em' }}
