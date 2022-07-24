@@ -5,6 +5,7 @@ const User = require('../models/userModel')
 const cookieOptions = {
   maxAge: 180 * 24 * 60 * 60 * 1000, // 180 days
   httpOnly: true,
+  sameSite: false,
   secure: process.env.NODE_ENV === 'production',
 }
 
