@@ -21,7 +21,8 @@ const cookieOptions = {
 const loginUser = async (req, res) => {
   const { email, password } = req.body
 
-  const ip = req.connection.remoteAddress.split(':').pop()
+  const ip =
+    req.headers['x-forwarded-for'] || req.socket.remoteAddress.split(':').pop()
 
   try {
     const user = await User.authenticate(email, password)
