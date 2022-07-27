@@ -17,7 +17,7 @@ const getSession = async () =>
     .get('/session')
     .then((response) => response)
     .catch((error) => {
-      console.error(error)
+      console.error(error.response.status)
       return error.response
     })
 
