@@ -8,8 +8,8 @@ export const authReducer = (state, action) => {
       return {
         ...state,
         user: {
-          _id: action.payload._id,
-          email: action.payload.email,
+          _id: action.payload.user._id,
+          email: action.payload.user.email,
         },
         accessToken: action.payload.accessToken,
       }
