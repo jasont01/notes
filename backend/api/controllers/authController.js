@@ -3,7 +3,7 @@ const Session = require('../models/sessionModel')
 const {
   generateAccessToken,
   generateRefreshToken,
-} = require('../../utils/generateToken')
+} = require('../utils/generateToken')
 
 const cookieOptions = {
   maxAge: 180 * 24 * 60 * 60 * 1000, // 180 days
