@@ -10,7 +10,7 @@ const {
 const router = express.Router()
 
 router.post('/login', loginUser)
-router.get('/session', session)
+router.get('/session', verifyRefreshToken, session)
 router.put('/refresh', verifyRefreshToken, refreshToken)
 router.delete('/logout', verifyRefreshToken, logoutUser)
 
