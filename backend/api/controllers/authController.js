@@ -1,6 +1,9 @@
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
 const User = require('../models/userModel')
+const Session = require('../models/sessionModel')
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require('../../utils/generateToken')
 
 const cookieOptions = {
   maxAge: 180 * 24 * 60 * 60 * 1000, // 180 days
@@ -9,104 +12,83 @@ const cookieOptions = {
   secure: process.env.NODE_ENV === 'production',
 }
 
-const generateAccessToken = (id) => {
-  return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: '15m',
-  })
-}
-
-const generateRefreshToken = (id) => {
-  return jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: '180d',
-  })
-}
-
-// @desc    Authenticate a user
-// @route   POST /api/auth/login
-// @access  Public
+//TODO: remove stale sessions
+/**
+ * @desc    Login user
+ * @route   POST /api/auth/login
+ * @access  Public
+ */
 const loginUser = async (req, res) => {
   const { email, password } = req.body
 
-  const user = await User.findOne({ email })
+  const ip = req.connection.remoteAddress.split(':').pop()
 
-  if (user && (await bcrypt.compare(password, user.password))) {
-    const refreshToken = generateRefreshToken(user._id)
+  try {
+    const user = await User.authenticate(email, password)
 
-    await User.findByIdAndUpdate(user._id, {
-      sessions: [...user.sessions, refreshToken],
+    const session = await Session.open(user._id, ip)
+
+    const refreshToken = generateRefreshToken(session._id)
+    const accessToken = generateAccessToken(session._id)
+
+    res.status(200).cookie('token', refreshToken, cookieOptions).json({
+      user,
+      accessToken,
     })
+  } catch (error) {
+    return res.status(400).json({ error: error.message })
+  }
+}
+/**
+ * @desc    Get existing session
+ * @route   GET /api/auth/session
+ * @access  Private
+ */
+const session = async (req, res) => {
+  try {
+    const user = await User.getUser(req.session.userId)
+
+    const accessToken = generateAccessToken(req.session._id)
+
+    res.status(200).json({
+      user,
+      accessToken,
+    })
+  } catch (error) {
+    return res.status(400).json({ error: error.message })
+  }
+}
+/**
+ * @desc    Refresh access token
+ * @route   PUT /api/auth/refresh
+ * @access  Private
+ */
+const refreshToken = async (req, res) => {
+  try {
+    const accessToken = generateAccessToken(req.session._id)
+
+    res.status(200).json({ accessToken })
+  } catch (error) {
+    return res.status(400).json({ error: error.message })
+  }
+}
+
+/**
+ * @desc    Logout user
+ * @route   DELETE /api/auth/logout
+ * @access  Private
+ */
+const logoutUser = async (req, res) => {
+  try {
+    await Session.close(req.session._id)
 
     res
       .status(200)
-      .cookie('token', refreshToken, cookieOptions)
-      .json({
-        _id: user._id,
-        email: user.email,
-        accessToken: generateAccessToken(user._id),
-      })
-  } else {
-    return res.status(400).json({ error: 'Invalid credentials' })
-  }
-}
-
-// @desc    Check for existing session
-// @route   GET /api/auth/session
-// @access  Public
-const session = async (req, res) => {
-  if (!req.cookies.token) return res.sendStatus(204)
-
-  try {
-    const refreshToken = req.cookies.token
-    const { id } = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
-
-    const user = await User.findById(id)
-
-    const validSession = user.sessions.find(
-      (session) => session === refreshToken
-    )
-    if (!validSession) return res.status(403).json({ error: 'invalid session' })
-
-    res.status(200).json({
-      _id: user._id,
-      email: user.email,
-      accessToken: generateAccessToken(id),
-    })
+      .clearCookie('token', cookieOptions)
+      .json({ success: true, message: 'User logged out successfully' })
   } catch (error) {
-    res.status(400).json({ error })
+    return res.status(400).json({ error: error.message })
   }
-}
-
-// @desc    Refresh access token
-// @route   PUT /api/auth/refresh
-// @access  Private
-const refreshToken = async (req, res) => {
-  const id = req.user._id
-  const refreshToken = req.cookies.token
-
-  const user = await User.findById(id)
-
-  const validSession = user.sessions.find((session) => session === refreshToken)
-  if (!validSession) return res.sendStatus(403)
-
-  res.status(200).json({ accessToken: generateAccessToken(id) })
-}
-
-// @desc    Logout user
-// @route   DELETE /api/auth/logout
-// @access  Private
-const logoutUser = async (req, res) => {
-  const refeshToken = req.cookies.token
-
-  const user = await User.findById(req.user._id)
-
-  await User.findByIdAndUpdate(user._id, {
-    sessions: user.sessions.filter((session) => session !== refeshToken),
-  })
-
-  res
-    .status(200)
-    .clearCookie('token', cookieOptions)
-    .json({ success: true, message: 'User logged out successfully' })
 }
 
 module.exports = { refreshToken, loginUser, logoutUser, session }

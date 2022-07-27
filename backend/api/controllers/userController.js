@@ -1,60 +1,56 @@
-const bcrypt = require('bcryptjs')
 const User = require('../models/userModel')
-const validator = require('validator')
 
-// @desc    Register new user
-// @route   POST /api/users/register
-// @access  Public
+/**
+ * @desc    Register new user
+ * @route   POST /api/users/register
+ * @access  Public
+ */
 const registerUser = async (req, res) => {
   const { email, password } = req.body
 
-  if (!email || !password) {
-    return res.status(400).json({ error: 'email and password are required' })
+  try {
+    const user = await User.register(email, password)
+
+    res.status(201).json(user)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
   }
-
-  if (!validator.isEmail(email)) {
-    return res.status(400).json({ error: 'email is not valid' })
-  }
-
-  const userExists = await User.findOne({ email })
-
-  if (userExists) {
-    return res.status(400).json({ error: 'user already exists' })
-  }
-
-  const salt = await bcrypt.genSalt()
-  const hashedPassword = await bcrypt.hash(password, salt)
-
-  const user = await User.create({
-    email,
-    password: hashedPassword,
-  })
-
-  if (!user) return res.sendStatus(400)
-
-  res.status(201).json(user)
 }
 
-// @desc    Get user
-// @route   GET /api/users
-// @access  Private
-const getUser = (req, res) => {
-  const user = req.user
+/**
+ * @desc    Get user
+ * @route   GET /api/users
+ * @access  Private
+ */
+const getUser = async (req, res) => {
+  const id = req.session.userId
 
-  res.status(200).json({ _id: user._id, email: user.email })
+  try {
+    const user = await User.getUser(id)
+
+    res.status(200).json(user)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
 }
 
-// @desc    Update user
-// @route   PATCH /api/users/update
-// @access  Private
+/**
+ * @desc    Update user
+ * @route   PATCH /api/users/update
+ * @access  Private
+ */
 const updateUser = (req, res) => {
+  //TODO
   res.json({ message: 'update user' })
 }
 
-// @desc    Delete user
-// @route   DELETE /api/users/delete
-// @access  Private
+/**
+ * @desc    Delete user
+ * @route   DELETE /api/users/delete
+ * @access  Private
+ */
 const deleteUser = (req, res) => {
+  //TODO
   res.json({ message: 'delete user' })
 }
 
