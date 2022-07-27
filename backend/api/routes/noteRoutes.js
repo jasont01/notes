@@ -8,14 +8,15 @@ const {
 } = require('../controllers/noteController')
 
 const { verifyAccessToken } = require('../middleware/authMiddleware')
+const { validateRequest } = require('../middleware/noteMiddleware')
 
 const router = express.Router()
 
 router.post('/', verifyAccessToken, createNote)
 router.get('/', verifyAccessToken, getAllNotes)
 
-router.get('/:id', verifyAccessToken, getNote)
-router.patch('/:id', verifyAccessToken, updateNote)
-router.delete('/:id', verifyAccessToken, deleteNote)
+router.get('/:id', verifyAccessToken, validateRequest, getNote)
+router.patch('/:id', verifyAccessToken, validateRequest, updateNote)
+router.delete('/:id', verifyAccessToken, validateRequest, deleteNote)
 
 module.exports = router
