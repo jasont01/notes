@@ -16,7 +16,10 @@ const getSession = async () =>
   authAPI
     .get('/session')
     .then((response) => response)
-    .catch((error) => console.error(error))
+    .catch((error) => {
+      console.error(error)
+      return error.response
+    })
 
 const refreshToken = async () =>
   authAPI.put('/refresh').then((response) => response.data)
