@@ -1,4 +1,4 @@
-import { Button, Typography, Container } from '@mui/material'
+import { Typography, Container } from '@mui/material'
 import { Link } from 'react-router-dom'
 import UserMenu from './UserMenu'
 
