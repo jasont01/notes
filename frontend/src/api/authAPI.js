@@ -5,26 +5,53 @@ const authAPI = axios.create({
   withCredentials: true,
 })
 
-const loginUser = async (data) =>
-  authAPI
-    .post('/login', JSON.stringify(data), {
-      headers: { 'Content-Type': 'application/json' },
-    })
-    .then((response) => response.data)
+const loginUser = async (data) => {
+  const response = await authAPI.post('/', JSON.stringify(data), {
+    headers: { 'Content-Type': 'application/json' },
+  })
+  return response.data
+}
 
-const getSession = async () =>
-  authAPI
-    .get('/session')
-    .then((response) => response)
-    .catch((error) => {
-      console.error(error.response.status)
-      return error.response
-    })
+const getSession = async () => {
+  try {
+    const response = await authAPI.get('/')
+    return response
+  } catch (error) {
+    return error.response
+  }
+}
 
-const refreshToken = async () =>
-  authAPI.put('/refresh').then((response) => response.data)
+const getAllSessions = async (accessToken) => {
+  if (!accessToken) return
+  const response = await authAPI.get('/sessions', {
+    headers: { authorization: 'Bearer ' + accessToken },
+  })
+  return response.data
+}
 
-const logoutUser = async () =>
-  authAPI.delete('/logout').then((response) => response.data)
+// const refreshToken = async (accessToken) => {
+//   if (!accessToken) return
+//   console.log(accessToken)
+//   const response = await authAPI.put('/', {
+//     headers: { authorization: 'Bearer ' + accessToken },
+//   })
+//   return response.data
+// }
 
-export { loginUser, logoutUser, refreshToken, getSession }
+const logoutUser = async (accessToken) => {
+  if (!accessToken) return
+  const response = await authAPI.delete('/', {
+    headers: { authorization: 'Bearer ' + accessToken },
+  })
+  return response.data
+}
+
+const deleteSession = async (accessToken, id) => {
+  if (!accessToken) return
+  const response = await authAPI.delete(`/${id}`, {
+    headers: { authorization: 'Bearer ' + accessToken },
+  })
+  return response.data
+}
+
+export { loginUser, logoutUser, getSession, getAllSessions, deleteSession }

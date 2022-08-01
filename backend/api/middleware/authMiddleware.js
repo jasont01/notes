@@ -6,10 +6,15 @@ const verifyRefreshToken = async (req, res, next) => {
 
   const token = req.cookies.token
 
+  const ip =
+    req.headers['x-forwarded-for'] || req.socket.remoteAddress.split(':').pop()
+
   try {
     const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
 
-    req.session = await Session.getSession(decoded.session)
+    const session = await Session.getSession(decoded.session)
+
+    req.session = await Session.updateSession(session._id, ip)
 
     next()
   } catch (error) {

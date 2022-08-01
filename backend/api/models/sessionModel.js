@@ -42,15 +42,26 @@ sessionSchema.statics.getSession = async function (id) {
 }
 
 /**
+ * Get all sessions for user
+ *
+ * @param {ObjectId} userId - user id
+ * @returns sessions
+ */
+sessionSchema.statics.getAllSessions = async function (userId) {
+  const sessions = await this.find({ userId })
+
+  return sessions
+}
+
+/**
  * Update session
  *
  * @param {ObjectId} id - session id
+ * @param {string} ip - ip address
  * @returns session
  */
-sessionSchema.statics.updateSession = async function (id) {
-  const session = await this.findByIdAndUpdate(id)
-
-  //TODO
+sessionSchema.statics.updateSession = async function (id, ip) {
+  const session = await this.findByIdAndUpdate(id, { ip }, { new: true })
 
   return session
 }

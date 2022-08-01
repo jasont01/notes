@@ -66,7 +66,7 @@ userSchema.statics.authenticate = async function (email, password) {
 
   const match = await bcrypt.compare(password, user.password)
 
-  if (!match) throw Error('Invalid password')
+  if (!match) throw Error('Invalid credentials')
 
   return { _id: user._id, email: user.email }
 }
