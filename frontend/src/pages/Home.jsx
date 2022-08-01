@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar'
 import NoteDetails from '../components/NoteDetails'
 import NoteForm from '../components/NoteForm'
 import { getAllNotes } from '../api/notesAPI'
+import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
   const { accessToken } = useAuthContext()
@@ -15,6 +16,12 @@ const Home = () => {
   const { dispatchAlert } = useAlertContext()
 
   const [loading, setLoading] = useState(true)
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!accessToken) navigate('/login')
+  }, [accessToken, navigate])
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -27,7 +34,7 @@ const Home = () => {
       }
     }
 
-    if (loading && accessToken) fetchNotes()
+    if (loading) fetchNotes()
   }, [dispatch, loading, accessToken, dispatchAlert])
 
   if (loading) {
