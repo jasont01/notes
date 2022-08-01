@@ -1,37 +1,35 @@
 import { useEffect } from 'react'
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import CssBaseline from '@mui/material/CssBaseline'
-import Alert from './components/Alert'
 import { useAuthContext } from './hooks/useAuthContext'
-import { refreshToken, getSession } from './api/authAPI'
+import { getSession } from './api/authAPI'
+import Alert from './components/Alert'
+
 import Home from './pages/Home'
 import Register from './pages/Register'
 import Login from './pages/Login'
+import Account from './pages/Account'
 
 const App = () => {
   const { dispatch, accessToken } = useAuthContext()
-
-  const navigate = useNavigate()
-  const location = useLocation()
 
   useEffect(() => {
     const checkSession = async () => {
       const response = await getSession()
       if (response.status === 200) {
         dispatch({ type: 'LOGIN_USER', payload: response.data })
-      } else {
-        if (location.pathname === '/') navigate('/login')
       }
     }
 
     if (!accessToken) checkSession()
-  }, [dispatch, navigate, accessToken, location])
+  }, [accessToken, dispatch])
 
   useEffect(() => {
     if (!accessToken) return
     const interval = setInterval(async () => {
-      const response = await refreshToken()
-      dispatch({ type: 'SET_ACCESS_TOKEN', payload: response.accessToken })
+      const response = await getSession()
+
+      dispatch({ type: 'SET_ACCESS_TOKEN', payload: response.data.accessToken })
     }, 14 * 60 * 1000)
 
     return () => clearInterval(interval)
@@ -44,6 +42,7 @@ const App = () => {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/account' element={<Account />} />
       </Routes>
       <Alert />
     </>
