@@ -17,7 +17,7 @@ const UserMenu = () => {
       await logoutUser(accessToken)
       dispatch({ type: 'LOGOUT_USER' })
       dispatchAlert({ type: 'SUCCESS', payload: 'Logout Successful' })
-      navigate('/')
+      navigate('/login')
     } catch (error) {
       dispatchAlert({ type: 'ERROR', payload: error.response.data.error })
     }
