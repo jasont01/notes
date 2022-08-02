@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { Container, Button, Typography } from '@mui/material'
@@ -9,10 +8,6 @@ const Account = () => {
   const { user } = useAuthContext()
 
   const navigate = useNavigate()
-
-  useEffect(() => {
-    if (!user) navigate('/login')
-  }, [user, navigate])
 
   const handleChangeEmail = () => {
     console.log('change email')
@@ -26,17 +21,11 @@ const Account = () => {
     console.log('Delete Account')
   }
 
-  const handleClose = () => {
-    navigate('/')
-  }
-
-  if (!user) return
-
   return (
     <>
       <Navbar />
       <Container maxWidth='sm'>
-        <Button onClick={handleClose}>Go Back</Button>
+        <Button onClick={() => navigate('/')}>Go Back</Button>
         <Typography variant='h5'>Account Settings</Typography>
         <div>
           <div>

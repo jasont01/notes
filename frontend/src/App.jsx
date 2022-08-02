@@ -1,9 +1,10 @@
-import { useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import CssBaseline from '@mui/material/CssBaseline'
 import { useAuthContext } from './hooks/useAuthContext'
 import { getSession } from './api/authAPI'
 import Alert from './components/Alert'
+import Spinner from './components/Spinner'
 
 import Home from './pages/Home'
 import Register from './pages/Register'
@@ -13,16 +14,16 @@ import Account from './pages/Account'
 const App = () => {
   const { dispatch, accessToken } = useAuthContext()
 
+  const [loading, setLoading] = useState(true)
+
   useEffect(() => {
-    const checkSession = async () => {
-      const response = await getSession()
+    getSession().then((response) => {
       if (response.status === 200) {
         dispatch({ type: 'LOGIN_USER', payload: response.data })
       }
-    }
-
-    if (!accessToken) checkSession()
-  }, [accessToken, dispatch])
+      setLoading(false)
+    })
+  }, [dispatch])
 
   useEffect(() => {
     if (!accessToken) return
@@ -35,14 +36,24 @@ const App = () => {
     return () => clearInterval(interval)
   }, [accessToken, dispatch])
 
+  if (loading) {
+    return <Spinner />
+  }
+
   return (
     <>
       <CssBaseline />
       <Routes>
-        <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route path='/account' element={<Account />} />
+        <Route
+          path='/'
+          element={accessToken ? <Home /> : <Navigate to='/login' />}
+        />
+        <Route
+          path='/account'
+          element={accessToken ? <Account /> : <Navigate to='/login' />}
+        />
       </Routes>
       <Alert />
     </>
