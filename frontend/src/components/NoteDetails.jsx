@@ -1,11 +1,13 @@
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useNotesContext } from '../hooks/useNotesContext'
 import { useAlertContext } from '../hooks/useAlertContext'
-import { Box, Button, ButtonGroup, Paper, Typography } from '@mui/material'
+import { Box, Paper, Typography } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
+import ArchiveIcon from '@mui/icons-material/Archive'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { deleteNote } from '../api/notesAPI'
+import NoteMenu from '../components/NoteMenu'
 
 const NoteDetails = ({ note }) => {
   const { dispatch } = useNotesContext()
@@ -26,6 +28,16 @@ const NoteDetails = ({ note }) => {
     }
   }
 
+  const menuOptions = [
+    { name: 'Edit', icon: EditIcon, onClick: handleEdit },
+    {
+      name: 'Archive',
+      icon: ArchiveIcon,
+      onClick: () => console.log('archive'),
+    },
+    { name: 'Delete', icon: DeleteForeverIcon, onClick: handleDelete },
+  ]
+
   return (
     <Paper
       sx={{
@@ -41,14 +53,7 @@ const NoteDetails = ({ note }) => {
       </Typography>
       <Typography>{note.text}</Typography>
       <Box sx={{ position: 'absolute', right: '0em', top: '1em' }}>
-        <ButtonGroup variant='text' size='small'>
-          <Button onClick={handleEdit} size='small'>
-            <EditIcon />
-          </Button>
-          <Button onClick={handleDelete} size='small'>
-            <DeleteForeverIcon size='small' />
-          </Button>
-        </ButtonGroup>
+        <NoteMenu options={menuOptions} />
       </Box>
       <Typography
         sx={{ fontSize: 'x-small', position: 'absolute', right: '1em' }}
