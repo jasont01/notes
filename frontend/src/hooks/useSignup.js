@@ -19,7 +19,7 @@ export const useSignup = () => {
     try {
       await registerUser({ username, email, password })
 
-      const user = await loginUser({ username, email, password })
+      const user = await loginUser({ username, password })
 
       dispatch({ type: 'LOGIN_USER', payload: user })
 
