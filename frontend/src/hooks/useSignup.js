@@ -13,13 +13,13 @@ export const useSignup = () => {
 
   const navigate = useNavigate()
 
-  const signup = async (email, password) => {
+  const signup = async (username, email, password) => {
     setIsLoading(true)
 
     try {
-      await registerUser({ email, password })
+      await registerUser({ username, email, password })
 
-      const user = await loginUser({ email, password })
+      const user = await loginUser({ username, email, password })
 
       dispatch({ type: 'LOGIN_USER', payload: user })
 

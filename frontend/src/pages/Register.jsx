@@ -27,7 +27,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    signup(email, password)
+    signup(username, email, password)
   }
 
   return (
@@ -106,17 +106,6 @@ const Register = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {/* <TextField
-              margin='normal'
-              required
-              fullWidth
-              name='password-confirm'
-              label='Confirm Password'
-              type='password'
-              id='password-confirm'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            /> */}
             <Button
               type='submit'
               fullWidth
