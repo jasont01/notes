@@ -30,7 +30,7 @@ const UserMenu = () => {
   return (
     <Menu shadow='md' width={200}>
       <Menu.Target>
-        <Button>{user?.email}</Button>
+        <Button>{user?.username}</Button>
       </Menu.Target>
 
       <Menu.Dropdown>
