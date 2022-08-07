@@ -1,24 +1,12 @@
-import { Typography, Container } from '@mui/material'
-import { Link } from 'react-router-dom'
-import UserMenu from './UserMenu'
+import { Container, Divider, Button } from '@mui/material'
 
-const Navbar = () => {
+const Navbar = ({ setShowArchive }) => {
   return (
-    <Container
-      component='header'
-      maxWidth='md'
-      sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '2em',
-      }}
-    >
-      <Link to='/'>
-        <Typography variant='h4' color='black'>
-          WebNotes
-        </Typography>
-      </Link>
-      <UserMenu />
+    <Container maxWidth='xs' sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Button onClick={() => setShowArchive(false)}>Home</Button>
+      <Button onClick={() => setShowArchive(true)}>Archived</Button>
+      <Divider />
+      <Button>Setting</Button>
     </Container>
   )
 }

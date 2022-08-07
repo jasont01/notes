@@ -1,13 +1,9 @@
-import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { Container, Button, Typography } from '@mui/material'
-import Navbar from '../components/Navbar'
-import Sessions from '../components/Sessions'
+import Sessions from './Sessions'
 
 const Account = () => {
   const { user } = useAuthContext()
-
-  const navigate = useNavigate()
 
   const handleChangeEmail = () => {
     console.log('change email')
@@ -23,9 +19,7 @@ const Account = () => {
 
   return (
     <>
-      <Navbar />
       <Container maxWidth='sm'>
-        <Button onClick={() => navigate('/')}>Go Back</Button>
         <Typography variant='h5'>Account Settings</Typography>
         <div>
           <div>

@@ -9,7 +9,6 @@ import Spinner from './components/Spinner'
 import Home from './pages/Home'
 import Register from './pages/Register'
 import Login from './pages/Login'
-import Account from './pages/Account'
 
 const App = () => {
   const { dispatch, accessToken } = useAuthContext()
@@ -44,16 +43,12 @@ const App = () => {
     <>
       <CssBaseline />
       <Routes>
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
         <Route
           path='/'
           element={accessToken ? <Home /> : <Navigate to='/login' />}
         />
-        <Route
-          path='/account'
-          element={accessToken ? <Account /> : <Navigate to='/login' />}
-        />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
       </Routes>
       <Alert />
     </>

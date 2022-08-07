@@ -30,6 +30,7 @@ const NoteMenu = ({ options }) => {
               option.onClick()
               handleClose()
             }}
+            disabled={option.disabled}
           >
             <option.icon /> {option.name}
           </MenuItem>

@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react'
-import { Container, Grid } from '@mui/material'
+import { Grid } from '@mui/material'
 import { useNotesContext } from '../hooks/useNotesContext'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useAlertContext } from '../hooks/useAlertContext'
 import Spinner from '../components/Spinner'
+import Header from '../components/Header'
 import Navbar from '../components/Navbar'
-import NoteDetails from '../components/NoteDetails'
-import NoteForm from '../components/NoteForm'
 import { getAllNotes } from '../api/notesAPI'
+import Notes from '../components/Notes'
+import Archive from '../components/Archive'
 
 const Home = () => {
   const { accessToken } = useAuthContext()
-  const { notes, dispatch } = useNotesContext()
+  const { dispatch } = useNotesContext()
   const { dispatchAlert } = useAlertContext()
 
   const [loading, setLoading] = useState(true)
+  const [showArchive, setShowArchive] = useState(false)
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -35,20 +37,18 @@ const Home = () => {
   }
 
   return (
-    <>
-      <Navbar />
-      <Container maxWidth='md'>
-        <Grid container spacing={1}>
-          {notes &&
-            notes.map((note) => (
-              <Grid item xs={12} sm={6} md={4} key={note._id}>
-                <NoteDetails note={note} />
-              </Grid>
-            ))}
-        </Grid>
-        <NoteForm />
-      </Container>
-    </>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Header />
+      </Grid>
+      <Grid item xs={2}>
+        <Navbar setShowArchive={setShowArchive} />
+      </Grid>
+      <Grid item xs={10}>
+        {showArchive ? <Archive /> : <Notes />}
+      </Grid>
+    </Grid>
   )
 }
+
 export default Home
