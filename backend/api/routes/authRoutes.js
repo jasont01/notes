@@ -14,6 +14,9 @@ const {
 
 const router = express.Router()
 
+/**
+ * @route /api/auth
+ */
 //TODO: organize. use accessTokens?
 router.post('/', loginUser)
 

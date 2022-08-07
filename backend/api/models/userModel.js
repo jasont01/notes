@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
-const validator = require('validator')
 
 const userSchema = mongoose.Schema(
   {
@@ -33,30 +32,6 @@ const userSchema = mongoose.Schema(
  * @returns new user
  */
 userSchema.statics.register = async function (username, email, password) {
-  if (!username || !email || !password) {
-    throw Error('all fields are required')
-  }
-
-  if (!validator.isAlphanumeric(username)) {
-    throw Error('usernames can only contain letters and numbers')
-  }
-
-  if (!validator.isEmail(email)) {
-    throw Error('please enter a valid email address')
-  }
-
-  const usernameExists = await this.findOne({ username })
-
-  if (usernameExists) {
-    throw Error('that username already exists')
-  }
-
-  const emailExists = await this.findOne({ email })
-
-  if (emailExists) {
-    throw Error('an account with that email already exists')
-  }
-
   const salt = await bcrypt.genSalt()
   const hashedPassword = await bcrypt.hash(password, salt)
 
@@ -101,7 +76,73 @@ userSchema.statics.getUser = async function (id) {
 
   if (!user) throw Error('User not found')
 
-  return { _id: user._id, email: user.email }
+  return { _id: user._id, username: user.username, email: user.email }
+}
+
+/**
+ * Update Username
+ *
+ * @param {ObjectId} id - user id
+ * @param {Object} username - new username
+ * @returns user
+ */
+userSchema.statics.updateUsername = async function (id, username) {
+  const user = await this.findOneAndUpdate(
+    { _id: id },
+    { username },
+    { new: true }
+  )
+
+  return { _id: user._id, username: user.username, email: user.email }
+}
+
+/**
+ * Update Email
+ *
+ * @param {ObjectId} id - user id
+ * @param {Object} email - new email
+ * @returns user
+ */
+userSchema.statics.updateEmail = async function (id, email) {
+  const user = await this.findOneAndUpdate(
+    { _id: id },
+    { email },
+    { new: true }
+  )
+
+  return { _id: user._id, username: user.username, email: user.email }
+}
+
+/**
+ * Update Password
+ *
+ * @param {ObjectId} id - user id
+ * @param {Object} username - new password
+ * @returns user
+ */
+userSchema.statics.updatePassword = async function (id, password) {
+  const salt = await bcrypt.genSalt()
+  const hashedPassword = await bcrypt.hash(password, salt)
+
+  const user = await this.findOneAndUpdate(
+    { _id: id },
+    { password: hashedPassword },
+    { new: true }
+  )
+
+  return { _id: user._id, username: user.username, email: user.email }
+}
+
+/**
+ * Delete User
+ *
+ * @param {ObjectId} id - user id
+ * @returns user
+ */
+userSchema.statics.deleteUser = async function (id) {
+  const user = await this.findByIdAndDelete(id)
+
+  return { _id: user._id, username: user.username, email: user.email }
 }
 
 const notesDB = mongoose.connection.useDb('notes')

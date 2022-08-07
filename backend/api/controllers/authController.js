@@ -76,21 +76,6 @@ const getAllSessions = async (req, res) => {
 }
 
 /**
- * @desc    Refresh access token
- * @route   PUT /api/auth/
- * @access  Private
- */
-// const refreshToken = async (req, res) => {
-//   try {
-//     const accessToken = generateAccessToken(req.session._id)
-
-//     res.status(200).json({ accessToken })
-//   } catch (error) {
-//     return res.status(400).json({ error: error.message })
-//   }
-// }
-
-/**
  * @desc    Logout user
  * @route   DELETE /api/auth/
  * @access  Private

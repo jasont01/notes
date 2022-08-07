@@ -13,6 +13,9 @@ const { validateRequest } = require('../middleware/noteMiddleware')
 
 const router = express.Router()
 
+/**
+ * @route /api/notes
+ */
 router.post('/', verifyAccessToken, createNote)
 router.get('/', verifyAccessToken, getAllNotes)
 
