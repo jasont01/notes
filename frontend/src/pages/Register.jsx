@@ -15,6 +15,7 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 
 const Register = () => {
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -22,6 +23,7 @@ const Register = () => {
 
   const navigate = useNavigate()
 
+  //TODO: add password confirm
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -74,6 +76,17 @@ const Register = () => {
               margin='normal'
               required
               fullWidth
+              id='username'
+              label='Username'
+              name='username'
+              autoFocus
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <TextField
+              margin='normal'
+              required
+              fullWidth
               id='email'
               label='Email Address'
               name='email'
@@ -90,10 +103,20 @@ const Register = () => {
               label='Password'
               type='password'
               id='password'
-              autoComplete='current-password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {/* <TextField
+              margin='normal'
+              required
+              fullWidth
+              name='password-confirm'
+              label='Confirm Password'
+              type='password'
+              id='password-confirm'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            /> */}
             <Button
               type='submit'
               fullWidth
