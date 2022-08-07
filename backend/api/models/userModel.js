@@ -4,6 +4,11 @@ const validator = require('validator')
 
 const userSchema = mongoose.Schema(
   {
+    username: {
+      type: String,
+      required: [true, 'username is required'],
+      unique: true,
+    },
     email: {
       type: String,
       required: [true, 'email is required'],
@@ -22,29 +27,41 @@ const userSchema = mongoose.Schema(
 /**
  * Register New User
  *
+ * @param {string} username
  * @param {string} email
  * @param {string} password
  * @returns new user
  */
-userSchema.statics.register = async function (email, password) {
-  if (!email || !password) {
-    throw Error(`${email ? 'password' : 'email'} is required`)
+userSchema.statics.register = async function (username, email, password) {
+  if (!username || !email || !password) {
+    throw Error('all fields are required')
+  }
+
+  if (!validator.isAlphanumeric(username)) {
+    throw Error('usernames can only contain letters and numbers')
   }
 
   if (!validator.isEmail(email)) {
     throw Error('please enter a valid email address')
   }
 
-  const userExists = await this.findOne({ email })
+  const usernameExists = await this.findOne({ username })
 
-  if (userExists) {
-    throw Error('user already exists')
+  if (usernameExists) {
+    throw Error('that username already exists')
+  }
+
+  const emailExists = await this.findOne({ email })
+
+  if (emailExists) {
+    throw Error('an account with that email already exists')
   }
 
   const salt = await bcrypt.genSalt()
   const hashedPassword = await bcrypt.hash(password, salt)
 
   const user = await this.create({
+    username,
     email,
     password: hashedPassword,
   })
@@ -55,12 +72,14 @@ userSchema.statics.register = async function (email, password) {
 /**
  * Authenticate User
  *
- * @param {string} email
+ * @param {string} login - username or email
  * @param {string} password
  * @returns user
  */
-userSchema.statics.authenticate = async function (email, password) {
-  const user = await this.findOne({ email })
+userSchema.statics.authenticate = async function (login, password) {
+  const user = await this.findOne({
+    $or: [{ username: login }, { email: login }],
+  })
 
   if (!user) throw Error('User not found')
 
@@ -68,7 +87,7 @@ userSchema.statics.authenticate = async function (email, password) {
 
   if (!match) throw Error('Invalid credentials')
 
-  return { _id: user._id, email: user.email }
+  return { _id: user._id, username: user.username, email: user.email }
 }
 
 /**

@@ -18,13 +18,13 @@ const cookieOptions = {
  * @access  Public
  */
 const loginUser = async (req, res) => {
-  const { email, password } = req.body
+  const { login, password } = req.body
 
   const ip =
     req.headers['x-forwarded-for'] || req.socket.remoteAddress.split(':').pop()
 
   try {
-    const user = await User.authenticate(email, password)
+    const user = await User.authenticate(login, password)
 
     const session = await Session.open(user._id, ip)
 

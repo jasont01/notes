@@ -12,11 +12,11 @@ export const useLogin = () => {
 
   const navigate = useNavigate()
 
-  const login = async (email, password) => {
+  const login = async (username, password) => {
     setIsLoading(true)
 
     try {
-      const user = await loginUser({ email, password })
+      const user = await loginUser({ login: username, password })
 
       dispatch({ type: 'LOGIN_USER', payload: user })
 

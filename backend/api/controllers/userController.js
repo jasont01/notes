@@ -6,10 +6,10 @@ const User = require('../models/userModel')
  * @access  Public
  */
 const registerUser = async (req, res) => {
-  const { email, password } = req.body
+  const { username, email, password } = req.body
 
   try {
-    const user = await User.register(email, password)
+    const user = await User.register(username, email, password)
 
     res.status(201).json(user)
   } catch (error) {

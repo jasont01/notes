@@ -9,6 +9,7 @@ const authReducer = (state, action) => {
         ...state,
         user: {
           _id: action.payload.user._id,
+          username: action.payload.user.username,
           email: action.payload.user.email,
         },
         accessToken: action.payload.accessToken,
