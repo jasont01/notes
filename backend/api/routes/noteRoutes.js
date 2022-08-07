@@ -4,6 +4,7 @@ const {
   getAllNotes,
   getNote,
   updateNote,
+  archiveNote,
   deleteNote,
 } = require('../controllers/noteController')
 
@@ -17,6 +18,7 @@ router.get('/', verifyAccessToken, getAllNotes)
 
 router.get('/:id', verifyAccessToken, validateRequest, getNote)
 router.patch('/:id', verifyAccessToken, validateRequest, updateNote)
+router.patch('/archive/:id', verifyAccessToken, validateRequest, archiveNote)
 router.delete('/:id', verifyAccessToken, validateRequest, deleteNote)
 
 module.exports = router

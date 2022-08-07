@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import ArchiveIcon from '@mui/icons-material/Archive'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
-import { deleteNote } from '../api/notesAPI'
+import { archiveNote, deleteNote } from '../api/notesAPI'
 import NoteMenu from '../components/NoteMenu'
 
 const NoteDetails = ({ note }) => {
@@ -28,12 +28,29 @@ const NoteDetails = ({ note }) => {
     }
   }
 
+  const handleArchive = async () => {
+    try {
+      const response = await archiveNote(accessToken, note._id)
+      //dispatch({ type: 'ARCHIVE_NOTE', payload: response })
+      console.log(response)
+      dispatch({ type: 'UPDATE_NOTE', payload: response })
+      dispatchAlert({ type: 'INFO', payload: 'note archived' })
+    } catch (error) {
+      dispatchAlert({ type: 'ERROR', payload: error.response.data.error })
+    }
+  }
+
   const menuOptions = [
-    { name: 'Edit', icon: EditIcon, onClick: handleEdit },
     {
-      name: 'Archive',
+      name: 'Edit',
+      icon: EditIcon,
+      onClick: handleEdit,
+      disabled: note.archived,
+    },
+    {
+      name: note.archived ? 'Unarchive' : 'Archive',
       icon: ArchiveIcon,
-      onClick: () => console.log('archive'),
+      onClick: handleArchive,
     },
     { name: 'Delete', icon: DeleteForeverIcon, onClick: handleDelete },
   ]

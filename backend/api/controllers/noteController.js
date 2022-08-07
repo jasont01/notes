@@ -67,6 +67,22 @@ const updateNote = async (req, res) => {
 }
 
 /**
+ * @desc Archive note
+ * @route PATCH /api/note/archive/:id
+ * @access Private
+ */
+const archiveNote = async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const archivedNote = await Note.archiveNote(id)
+    res.status(200).json(archivedNote)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+}
+
+/**
  * @desc Delete note
  * @route DELETE /api/notes/:id
  * @access Private
@@ -87,5 +103,6 @@ module.exports = {
   getAllNotes,
   getNote,
   updateNote,
+  archiveNote,
   deleteNote,
 }

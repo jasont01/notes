@@ -40,6 +40,14 @@ const updateNote = async (accessToken, id, data) => {
   return response.data
 }
 
+const archiveNote = async (accessToken, id) => {
+  if (!accessToken) return
+  const response = await notesAPI.patch(`/archive/${id}`, null, {
+    headers: { authorization: 'Bearer ' + accessToken },
+  })
+  return response.data
+}
+
 const deleteNote = async (accessToken, id) => {
   if (!accessToken) return
   const response = await notesAPI.delete(`/${id}`, {
@@ -48,4 +56,4 @@ const deleteNote = async (accessToken, id) => {
   return response.data
 }
 
-export { createNote, getAllNotes, getNote, updateNote, deleteNote }
+export { createNote, getAllNotes, getNote, updateNote, archiveNote, deleteNote }

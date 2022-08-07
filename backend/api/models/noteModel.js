@@ -9,6 +9,7 @@ const noteSchema = mongoose.Schema(
       required: true,
       ref: 'User',
     },
+    archived: { type: Boolean, default: false },
   },
   { timestamps: true }
 )
@@ -78,6 +79,22 @@ noteSchema.statics.updateNote = async function (id, title, text) {
   )
 
   return updatedNote
+}
+
+/**
+ * Archive note - Toggles archived status
+ *
+ * @param {ObjectId} id - document id
+ * @returns {object} note
+ */
+noteSchema.statics.archiveNote = async function (id) {
+  const archivedNote = await this.findByIdAndUpdate(
+    id,
+    [{ $set: { archived: { $not: '$archived' } } }],
+    { new: true }
+  )
+
+  return archivedNote
 }
 
 /**
