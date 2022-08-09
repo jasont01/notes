@@ -9,6 +9,7 @@ import Spinner from './components/Spinner'
 import Home from './pages/Home'
 import Register from './pages/Register'
 import Login from './pages/Login'
+import Settings from './components/Settings'
 
 const App = () => {
   const { dispatch, accessToken } = useAuthContext()
@@ -49,6 +50,7 @@ const App = () => {
         />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/account' element={<Settings />} />
       </Routes>
       <Alert />
     </>

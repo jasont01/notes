@@ -14,6 +14,8 @@ import {
 } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 
+//TODO: client-side validation
+
 const Register = () => {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')

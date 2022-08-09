@@ -19,16 +19,42 @@ const getUser = async (accessToken) => {
   return response.data
 }
 
-//TODO: Implement
-const updateUser = async (accessToken) => {
+const updateUsername = async (accessToken, username) => {
   if (!accessToken) return
-  const response = await usersAPI.patch('/update', {
-    headers: { authorization: 'Bearer ' + accessToken },
-  })
+  const response = await usersAPI.patch(
+    '/username',
+    { username },
+    {
+      headers: { authorization: 'Bearer ' + accessToken },
+    }
+  )
   return response.data
 }
 
-//TODO: Implement
+const updateEmail = async (accessToken, email) => {
+  if (!accessToken) return
+  const response = await usersAPI.patch(
+    '/email',
+    { email },
+    {
+      headers: { authorization: 'Bearer ' + accessToken },
+    }
+  )
+  return response.data
+}
+
+const updatePassword = async (accessToken, password) => {
+  if (!accessToken) return
+  const response = await usersAPI.patch(
+    '/password',
+    { password },
+    {
+      headers: { authorization: 'Bearer ' + accessToken },
+    }
+  )
+  return response.data
+}
+
 const deleteUser = async (accessToken) => {
   if (!accessToken) return
   const response = await usersAPI.delete('/delete', {
@@ -37,4 +63,11 @@ const deleteUser = async (accessToken) => {
   return response.data
 }
 
-export { registerUser, getUser, updateUser, deleteUser }
+export {
+  registerUser,
+  getUser,
+  updateUsername,
+  updateEmail,
+  updatePassword,
+  deleteUser,
+}

@@ -1,20 +1,51 @@
 import { useAuthContext } from '../hooks/useAuthContext'
+import { useAlertContext } from '../hooks/useAlertContext'
 import { Container, Button, Typography } from '@mui/material'
 import Sessions from './Sessions'
+import {
+  updateUsername,
+  updateEmail,
+  updatePassword,
+  deleteUser,
+} from '../api/usersAPI'
+import { useNavigate } from 'react-router-dom'
 
 const Account = () => {
-  const { user } = useAuthContext()
+  const { user, accessToken, dispatch } = useAuthContext()
+  const { dispatchAlert } = useAlertContext()
 
-  const handleChangeEmail = () => {
-    console.log('change email')
+  const navigate = useNavigate
+
+  const handleChangeUsername = async () => {
+    //TODO: client-side validation
+    //TODO: show modal
+    updateUsername(accessToken)
   }
 
-  const handleChangePassword = () => {
-    console.log('change password')
+  const handleChangeEmail = async () => {
+    //TODO: client-side validation
+    //TODO: show modal
+    updateEmail(accessToken)
   }
 
-  const handleDelete = () => {
-    console.log('Delete Account')
+  const handleChangePassword = async () => {
+    //TODO: client-side validation
+    //TODO: show modal
+    updatePassword(accessToken)
+  }
+
+  const handleDelete = async () => {
+    //TODO: confirm
+
+    try {
+      await deleteUser(accessToken)
+      //TODO: not working
+      dispatch({ type: 'LOGOUT_USER' })
+      dispatchAlert({ type: 'SUCCESS', payload: 'Account Deleted' })
+      navigate('/login')
+    } catch (error) {
+      dispatchAlert({ type: 'ERROR', payload: error.response.data.error })
+    }
   }
 
   return (
@@ -22,6 +53,11 @@ const Account = () => {
       <Container maxWidth='sm'>
         <Typography variant='h5'>Account Settings</Typography>
         <div>
+          <div>
+            <Typography>Username</Typography>
+            {user.username}
+            <Button onClick={handleChangeUsername}>Change</Button>
+          </div>
           <div>
             <Typography>Email address</Typography>
             {user.email}
