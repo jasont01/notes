@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 
+const db = process.env.MONGO_DB_NS
+
 const noteSchema = mongoose.Schema(
   {
     title: String,
@@ -109,6 +111,6 @@ noteSchema.statics.deleteNote = async function (id) {
   return deleted
 }
 
-const notesDB = mongoose.connection.useDb('notes')
+const notesDB = mongoose.connection.useDb(db)
 
 module.exports = notesDB.model('Note', noteSchema)

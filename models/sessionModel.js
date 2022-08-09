@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 
+const db = process.env.MONGO_DB_NS
+
 const sessionSchema = mongoose.Schema(
   {
     userId: {
@@ -78,6 +80,6 @@ sessionSchema.statics.close = async function (id) {
   return session
 }
 
-const notesDB = mongoose.connection.useDb('notes')
+const notesDB = mongoose.connection.useDb(db)
 
 module.exports = notesDB.model('Session', sessionSchema)

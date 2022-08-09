@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 
+const db = process.env.MONGO_DB_NS
+
 const userSchema = mongoose.Schema(
   {
     username: {
@@ -145,6 +147,6 @@ userSchema.statics.deleteUser = async function (id) {
   return { _id: user._id, username: user.username, email: user.email }
 }
 
-const notesDB = mongoose.connection.useDb('notes')
+const notesDB = mongoose.connection.useDb(db)
 
 module.exports = notesDB.model('User', userSchema)
