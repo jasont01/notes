@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const notesAPI = axios.create({
-  baseURL: `${process.env.REACT_APP_API_URL}/notes`,
+  baseURL: '/api/notes',
 })
 
 const createNote = async (accessToken, data) => {
