@@ -31,8 +31,7 @@ const NoteDetails = ({ note }) => {
   const handleArchive = async () => {
     try {
       const response = await archiveNote(accessToken, note._id)
-      //dispatch({ type: 'ARCHIVE_NOTE', payload: response })
-      console.log(response)
+
       dispatch({ type: 'UPDATE_NOTE', payload: response })
       dispatchAlert({ type: 'INFO', payload: 'note archived' })
     } catch (error) {
