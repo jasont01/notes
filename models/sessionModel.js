@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
-const db = process.env.MONGO_DB_NS
+//const db = process.env.MONGO_DB_NS
+const db = 'notes'
 
 const sessionSchema = mongoose.Schema(
   {

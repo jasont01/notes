@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 
-const db = process.env.MONGO_DB_NS
+//const db = process.env.MONGO_DB_NS
+const db = 'notes'
 
 const userSchema = mongoose.Schema(
   {
