@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const usersAPI = axios.create({
-  baseURL: `${process.env.REACT_APP_API_URL}/users`,
+  baseURL: `${import.meta.env.VITE_API_URL}/users`,
 })
 
 const registerUser = async (data) => {
