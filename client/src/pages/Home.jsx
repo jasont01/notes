@@ -5,7 +5,6 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import { useAlertContext } from '../hooks/useAlertContext'
 import Spinner from '../components/Spinner'
 import Header from '../components/Header'
-import Navbar from '../components/Navbar'
 import { getAllNotes } from '../api/notesAPI'
 import Notes from '../components/Notes'
 import Archive from '../components/Archive'
@@ -39,13 +38,10 @@ const Home = () => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <Header />
-      </Grid>
-      <Grid item xs={2}>
-        <Navbar setShowArchive={setShowArchive} />
+        <Header setShowArchive={setShowArchive} />
       </Grid>
       <Grid item xs={10}>
-        {showArchive ? <Archive /> : <Notes />}
+        {showArchive ? <Archive setShowArchive={setShowArchive} /> : <Notes />}
       </Grid>
     </Grid>
   )

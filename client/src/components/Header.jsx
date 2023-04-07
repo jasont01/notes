@@ -2,7 +2,7 @@ import { Typography, Container } from '@mui/material'
 import { Link } from 'react-router-dom'
 import UserMenu from './UserMenu'
 
-const Navbar = () => {
+const Navbar = ({ setShowArchive }) => {
   return (
     <Container
       component='header'
@@ -15,10 +15,10 @@ const Navbar = () => {
     >
       <Link to='/'>
         <Typography variant='h4' color='black'>
-          WebNotes
+          Notes
         </Typography>
       </Link>
-      <UserMenu />
+      <UserMenu setShowArchive={setShowArchive} />
     </Container>
   )
 }

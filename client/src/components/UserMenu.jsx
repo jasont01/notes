@@ -3,10 +3,11 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import { useAlertContext } from '../hooks/useAlertContext'
 import { logoutUser } from '../api/authAPI'
 
-import { Menu, Button } from '@mantine/core'
-import { IconSettings, IconLogout } from '@tabler/icons'
+import { Menu } from '@mantine/core'
+import { IconSettings, IconLogout, IconArchive } from '@tabler/icons'
+import { Avatar } from '@mui/material'
 
-const UserMenu = () => {
+const UserMenu = ({ setShowArchive }) => {
   const { user, dispatch, accessToken } = useAuthContext()
   const { dispatchAlert } = useAlertContext()
 
@@ -27,18 +28,29 @@ const UserMenu = () => {
     navigate('/account')
   }
 
+  if (!user) return null
+
   return (
     <Menu shadow='md' width={200}>
       <Menu.Target>
-        <Button>{user?.username}</Button>
+        <Avatar src={null}>{user.email.charAt(0)}</Avatar>
       </Menu.Target>
 
       <Menu.Dropdown>
+        <Menu.Item icon={<Avatar />}>{user.email}</Menu.Item>
+        <Menu.Divider />
+        <Menu.Item
+          icon={<IconArchive size={14} />}
+          onClick={() => setShowArchive(true)}
+        >
+          Archived
+        </Menu.Item>
         <Menu.Item icon={<IconSettings size={14} />} onClick={handleSettings}>
           Settings
         </Menu.Item>
+        <Menu.Divider />
         <Menu.Item icon={<IconLogout size={14} />} onClick={handleLogout}>
-          Logout
+          Sign out
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>

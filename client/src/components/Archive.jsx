@@ -1,12 +1,14 @@
-import { Container, Grid } from '@mui/material'
+import { Container, Grid, Typography, Button } from '@mui/material'
 import { useNotesContext } from '../hooks/useNotesContext'
 import NoteDetails from './NoteDetails'
 
-const Archive = () => {
+const Archive = ({ setShowArchive }) => {
   const { notes } = useNotesContext()
 
   return (
     <Container maxWidth='md'>
+      <Typography variant='h5'>Archived Notes</Typography>
+      <Button onClick={() => setShowArchive(false)}>Home</Button>
       <Grid container spacing={1}>
         {notes.map((note) =>
           note.archived ? (
